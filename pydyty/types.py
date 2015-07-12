@@ -1,5 +1,7 @@
 # import logging
 from typing import Typing
+from errors import AbstractClassError
+from errors import NominalTypeInitError
 
 
 class PydytyType(object):
@@ -9,10 +11,10 @@ class PydytyType(object):
         self.loc = loc
 
     def __str__(self):
-        raise Exception('Internal Error')
+        raise AbstractClassError()
 
     def __eq__(self, other):
-        raise Exception('Internal Error')
+        raise AbstractClassError()
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -60,7 +62,7 @@ class CompositeType(PydytyType):
         return self
 
     def __str__(self):
-        raise Exception("Can't print composite abstract type")
+        raise AbstractClassError()
 
     def __eq__(self, other):
         result = isinstance(other, self.__class__)
@@ -172,7 +174,7 @@ class NominalType(PydytyType):
             else:
                 self.name = type(name_or_obj).__name__
         elif not isinstance(name_or_obj, basestring):
-            raise Exception('Nominal type name must be a string.')
+            raise NominalTypeInitError()
         else:
             self.name = name_or_obj
 
