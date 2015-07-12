@@ -1,5 +1,6 @@
 import traceback
 import types
+from pydyty.loc import Location
 
 
 class ObjectWrapper(object):
@@ -53,7 +54,7 @@ class ObjectWrapper(object):
             result of the original method call."""
 
             # Try to get the caller information
-            loc = traceback.extract_stack()[-2]
+            loc = Location.create(traceback.extract_stack()[-2])
 
             # Get types of the arguments
             arg_types = []
@@ -61,21 +62,22 @@ class ObjectWrapper(object):
                 if hasattr(arg, "__pydyty__"):
                     arg_types.append(arg.__pydyty_type__)
                 else:
-                    arg_types.append(types.NominalType(arg, is_object=True))
+                    arg_types.append(types.NominalType(arg, is_object=True,
+                                     loc=loc))
 
             # Get types of the dictionary arguments
             kwarg_types = {}
             for kwarg_name, kwarg_val in kwargs.iteritems():
-                print kwarg_name
                 if hasattr(kwarg_val, '__pydyty__'):
                     kwarg_type = kwarg_val.__pydyty_type__
                 else:
-                    kwarg_type = types.NominalType(kwarg_val, is_object=True)
+                    kwarg_type = types.NominalType(kwarg_val, is_object=True,
+                                                   loc=loc)
                 kwarg_types[kwarg_name] = kwarg_type
 
             # Lastly, return type. Run the original method first.
             ret_val = attr(*args, **kwargs)
-            ret_type = types.NominalType(ret_val, is_object=True)
+            ret_type = types.NominalType(ret_val, is_object=True, loc=loc)
             method_type = types.MethodType(arg_types, kwarg_types, ret_type,
                                            loc=loc)
 
@@ -91,6 +93,10 @@ class ObjectWrapper(object):
         if hasattr(attr, '__call__'):
             return __method_missing__
 
-        self.__pydyty_type__.add_attr(name, types.NominalType(attr, is_object=True))  # noqa
+        # Try to get the caller information
+        loc = Location.create(traceback.extract_stack()[-1])
+
+        self.__pydyty_type__.add_attr(
+            name, types.NominalType(attr, is_object=True, loc=loc))
 
         return attr

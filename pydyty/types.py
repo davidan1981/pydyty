@@ -2,31 +2,10 @@
 from typing import Typing
 
 
-class Location(object):
-
-    def __init__(self, *args, **kwargs):
-        stack_info = kwargs.get('stack_info', None)
-        if stack_info:
-            self.file = stack_info[0]
-            self.line = stack_info[1]
-            self.code = stack_info[2]
-        else:
-            self.file = kwargs.get('file', None)
-            self.line = kwargs.get('line', None)
-            self.code = kwargs.get('code', None)
-
-
-class MultiLocation(object):
-
-    def __init__(self, locs):
-        self.locs = locs
-
-
 class PydytyType(object):
     """ Abstract type to represent a type. """
 
-    def __init__(self, **kwargs):
-        loc = kwargs.get('loc', None)
+    def __init__(self, loc=None, **kwargs):
         self.loc = loc
 
     def __str__(self):
@@ -37,6 +16,12 @@ class PydytyType(object):
 
     def __ne__(self, other):
         return not self.__eq__(other)
+
+    def add_loc(self, loc):
+        if self.loc is not None:
+            self.loc.add_loc(loc)
+        else:
+            self.loc = loc
 
 
 class TopType(PydytyType):
@@ -71,6 +56,7 @@ class CompositeType(PydytyType):
     def add_type(self, _type):
         """ Adds another type to the list of possible types. """
         self.types.append(_type)
+        self.add_loc(_type.loc)
         return self
 
     def __str__(self):

@@ -163,8 +163,8 @@ class TypeTestCase(BaseTestCase):
         r_t = types.NominalType('F')
         m3_t = types.MethodType([a1_t], {}, r_t)
         o_t.add_attr('m1', m3_t)
-        self.assertEqual('[m1: ((A) -> B) and ((C) -> D) and ((E) -> F)]', str(o_t))
-        
+        self.assertEqual('[m1: ((A) -> B) and ((C) -> D) and ((E) -> F)]', str(o_t))  # noqa
+
     def test_fusion_type_one_method(self):
         a1_t = types.NominalType('A')
         r_t = types.NominalType('B')

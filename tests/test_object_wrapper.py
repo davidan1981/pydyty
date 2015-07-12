@@ -1,6 +1,12 @@
+import inspect
 from base_test import BaseTestCase
 from pydyty.object_wrapper import ObjectWrapper
 from pydyty import types
+
+
+def lineno():
+    """Returns the current line number in our program."""
+    return inspect.currentframe().f_back.f_lineno
 
 
 class TestOldClass:
@@ -77,6 +83,25 @@ class ObjectWrapperTestCase(BaseTestCase):
         self.obj_wrapper.plus(x, y)
         obj_type = self.obj_wrapper.__pydyty_type__
         self.assertEqual('[plus: (int, int) -> int]', str(obj_type))
+
+    def test_locations(self):
+        x = 1
+        y = 2
+        self.obj_wrapper.plus(x, y)
+        obj_type = self.obj_wrapper.__pydyty_type__
+        meth_type = obj_type.attrs['plus']
+        loc = meth_type.loc
+        self.assertTrue(loc.first.file.endswith('test_object_wrapper.py'))
+        self.assertEqual(lineno() - 5, loc.first.line)
+        self.assertEqual('test_locations', loc.first.func)
+        self.assertEqual('self.obj_wrapper.plus(x, y)', loc.first.code)
+        arg_type = meth_type.arg_types[0]
+        loc = arg_type.loc
+        self.assertTrue(loc.first.file.endswith('test_object_wrapper.py'))
+        self.assertEqual(lineno() - 11, loc.first.line)
+        self.assertEqual('test_locations', loc.first.func)
+        self.assertEqual('self.obj_wrapper.plus(x, y)', loc.first.code)
+        arg_type = meth_type.arg_types[0]
 
     def test_two_method_calls(self):
         self.obj_wrapper.plus(1, 2)
