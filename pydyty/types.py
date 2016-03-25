@@ -169,7 +169,9 @@ class NominalType(PydytyType):
         object from which you'd like to retrive type information."""
         super(NominalType, self).__init__(**kwargs)
         if is_object:
-            if hasattr(name_or_obj, '__class__'):
+            if hasattr(name_or_obj, '__pydyty__'):  # object wrapper
+                self.name = name_or_obj.__pydyty_obj__.__class__.__name__
+            elif hasattr(name_or_obj, '__class__'):
                 self.name = name_or_obj.__class__.__name__
             else:
                 self.name = type(name_or_obj).__name__
