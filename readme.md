@@ -1,4 +1,8 @@
-PyDyTy is an automatic type documentation tool for Python. It monkey patches
+# pydyty
+
+![](https://travis-ci.org/davidan1981/pydyty.svg?branch=master)
+
+pydyty is an automatic type documentation tool for Python. It monkey patches
 code to monitors function calls during which type information is collected
 by the patched code. Finally, it further processes the information and
 finally generates type documentation.
