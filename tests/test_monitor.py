@@ -18,3 +18,6 @@ class MonitorTestCase(BaseTestCase):
         self.assertEqual(1, a.foo(1))
         self.assertEqual('[foo: (int) -> int]',
                          str(A.__pydyty_type__))
+        self.assertEqual(2, a.bar(1, 1))
+        self.assertEqual("[bar: (int, int) -> int, foo: (int) -> int]",
+                         str(A.__pydyty_type__))

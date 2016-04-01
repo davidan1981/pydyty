@@ -42,6 +42,28 @@ class ObjectWrapper(object):
         else:
             object.__setattr__(self, name, value)
 
+    def __add__(self, other):
+        """ Strip off the argument and apply the original operator. Unless
+        __add__ is overriden, it is NOT possible to wrap the argument. So do
+        not wrap it. We will just NOT support structural type for the
+        argument for now. """
+
+        if hasattr(other, "__pydyty__"):
+            other_obj = other.__pydyty_obj__
+        else:
+            other_obj = other
+        ret_val = self.__pydyty_obj__ + other_obj
+
+        if not isinstance(self.__pydyty_type__, types.NominalType):
+            # Try to get the caller information
+            loc = Location.create(traceback.extract_stack()[-1])
+            arg_types = [types.NominalType(other, is_object=True, loc=loc)]
+            ret_type = types.NominalType(ret_val, is_object=True, loc=loc)
+            method_type = types.MethodType(arg_types, {}, ret_type, loc=loc)
+            self.__pydyty_type__.add_attr("__add__", method_type)
+
+        return ret_val
+
     def __getattr__(self, name):
         """ Any non-__pydyty_* attributes will be routed to here. There are
         methods and fields, which are distinguished by checking '__call__'
