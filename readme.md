@@ -1,6 +1,7 @@
 # pydyty
 
-![](https://travis-ci.org/davidan1981/pydyty.svg?branch=master)
+[![Build Status](https://travis-ci.org/davidan1981/pydyty.svg?branch=master)](https://travis-ci.org/davidan1981/pydyty)
+[![Coverage Status](https://coveralls.io/repos/github/davidan1981/pydyty/badge.svg?branch=master)](https://coveralls.io/github/davidan1981/pydyty?branch=master)
 
 pydyty is an automatic type documentation tool for Python. It monkey patches
 code to monitors function calls during which type information is collected
